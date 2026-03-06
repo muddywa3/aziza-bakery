@@ -253,13 +253,9 @@ Admin users can be created via MongoDB directly or using a seeding script.
 4. Create view in `views/admin/`
 
 ### Custom Middleware Example
-```javascript
-// middleware/custom.js
-module.exports = (req, res, next) => {
-  // Your logic here
-  next();
-};
-```
+You can create custom middleware by adding a file in the middleware/ folder.
+Middleware functions receive (req, res, next) and allow you to run logic before a route executes, such as authentication, input validation, or logging.
+Remember to export the function and include it in your routes using app.use() or route-specific middleware.
 
 ## 🐛 Troubleshooting
 
