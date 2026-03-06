@@ -278,6 +278,19 @@ module.exports = (req, res, next) => {
 - Verify file type (images only)
 - Ensure public/images/ exists
 
+
+
+## 👨‍💻 Author
+
+Mohamed  
+Full-Stack Developer
+
+GitHub: https://github.com/muddywa3
+
+---
+
+
+
 ## 📄 License
 MIT License - Feel free to use for your projects
 
