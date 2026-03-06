@@ -126,8 +126,7 @@ npm start
 ## 🔑 Default Credentials
 
 ### Environment-based Admin (Fallback)
-- Username: `admin`
-- Password: `aziza2026`
+See `.env.example` for admin credentials
 
 ### Database Users
 Create users via MongoDB or seed script (future feature)
@@ -135,20 +134,12 @@ Create users via MongoDB or seed script (future feature)
 ## 📝 Environment Variables
 
 ```env
-# Database
-MONGO_URI=mongodb://localhost:27017/aziza-bakery
-
-# Admin Credentials (Fallback)
-ADMIN_USERNAME=admin
-ADMIN_PASSWORD=aziza2026
-
-# Session
-SESSION_SECRET=your-secret-key-change-in-production
-
-# Server
-PORT=3000
-NODE_ENV=development
-```
+MONGO_URI=
+ADMIN_USERNAME=
+ADMIN_PASSWORD=
+SESSION_SECRET=
+PORT=
+NODE_ENV=
 
 ## 🛣️ Routes
 
@@ -254,20 +245,7 @@ npm run dev
 
 ## 📚 Documentation
 
-### Creating a New Admin User (MongoDB)
-```javascript
-const User = require('./models/User');
-
-const newUser = new User({
-  username: 'john',
-  email: 'john@azizabakery.com',
-  password: 'securepassword',
-  role: 'admin'
-});
-
-await newUser.save();
-```
-
+Admin users can be created via MongoDB directly or using a seeding script.
 ### Adding a New Route
 1. Create controller in `controllers/`
 2. Add route in `routes/admin.js` or `routes/public.js`
