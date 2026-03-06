@@ -1,0 +1,106 @@
+<%- include('../layout', { 
+  title: title,
+  username: username,
+  role: role,
+  content: `
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">User Management</h1>
+        <a href="/admin/users/create" class="bg-primary hover:bg-secondary text-white px-4 py-2 rounded transition">
+          <i class="fas fa-plus mr-2"></i>Add User
+        </a>
+      </div>
+
+      ${success ? `<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">${success}</div>` : ''}
+      ${error ? `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">${error}</div>` : ''}
+
+      <div class="overflow-x-auto">
+        <table class="min-w-full table-auto">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            ${users.map(user => `
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm font-medium text-gray-900">${user.username}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">${user.email}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    user.role === 'super_admin' ? 'bg-purple-100 text-purple-800' :
+                    user.role === 'admin' ? 'bg-red-100 text-red-800' :
+                    'bg-blue-100 text-blue-800'
+                  }">
+                    ${user.role}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  ${new Date(user.createdAt).toLocaleDateString()}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <a href="/admin/users/${user._id}/edit" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
+                  <button onclick="deleteUser('${user._id}', '${user.username}')" class="text-red-600 hover:text-red-900">Delete</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      ${totalPages > 1 ? `
+        <div class="flex justify-center mt-6">
+          <nav class="flex space-x-2">
+            ${currentPage > 1 ? `<a href="?page=${currentPage - 1}" class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Previous</a>` : ''}
+            ${Array.from({length: totalPages}, (_, i) => i + 1).map(page => `
+              <a href="?page=${page}" class="px-3 py-2 ${page === currentPage ? 'bg-primary text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'} rounded">${page}</a>
+            `).join('')}
+            ${currentPage < totalPages ? `<a href="?page=${currentPage + 1}" class="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">Next</a>` : ''}
+          </nav>
+        </div>
+      ` : ''}
+    </div>
+
+    <script>
+      async function deleteUser(userId, username) {
+        const result = await Swal.fire({
+          title: 'Delete User?',
+          text: \`Are you sure you want to delete user "\${username}"? This action cannot be undone.\`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, delete user!'
+        });
+
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch(\`/admin/users/\${userId}/delete\`, {
+              method: 'POST'
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+              Swal.fire('Deleted!', data.message, 'success').then(() => {
+                location.reload();
+              });
+            } else {
+              Swal.fire('Error', data.message, 'error');
+            }
+          } catch (error) {
+            Swal.fire('Error', 'Failed to delete user', 'error');
+          }
+        }
+      }
+    </script>
+  `
+}) %>

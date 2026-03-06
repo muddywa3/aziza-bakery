@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Aziza Bakery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#d35400',
+              secondary: '#e67e22',
+              cream: '#faf8f5',
+              gold: '#d4af37'
+            },
+            fontFamily: {
+              'display': ['Playfair Display', 'serif'],
+              'body': ['Poppins', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-cream font-body">
+
+    <%- include('../partials/navbar') %>
+
+    <!-- Profile Content -->
+    <div class="max-w-4xl mx-auto px-4 py-12 mt-20">
+        <div class="bg-white rounded-lg shadow-md p-8">
+            <h1 class="text-3xl font-display font-bold mb-8">My Profile</h1>
+            
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-6">
+                    Profile updated successfully!
+                </div>
+            <% } %>
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+                    <%= error %>
+                </div>
+            <% } %>
+            
+            <form action="/profile" method="POST" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="name" name="name" 
+                               value="<%= customer.name %>"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" id="email" name="email" 
+                               value="<%= customer.email %>" disabled
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-gray-500">
+                        <p class="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                    </div>
+                    
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" 
+                               value="<%= customer.phone || '' %>"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Preferences</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="checkbox" name="newsletter" 
+                                       <%= customer.preferences?.newsletter ? 'checked' : '' %>
+                                       class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                <span class="ml-2 text-sm text-gray-700">Newsletter subscription</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="smsNotifications" 
+                                       <%= customer.preferences?.smsNotifications ? 'checked' : '' %>
+                                       class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                <span class="ml-2 text-sm text-gray-700">SMS notifications</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between items-center pt-6 border-t">
+                    <a href="/" class="text-gray-600 hover:text-primary">← Back to Home</a>
+                    <button type="submit" 
+                            class="bg-primary hover:bg-secondary text-white px-6 py-2 rounded-md font-medium transition">
+                        Update Profile
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Account Info -->
+            <div class="mt-8 pt-8 border-t">
+                <h2 class="text-xl font-semibold mb-4">Account Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                    <div>
+                        <strong>Member since:</strong> <%= new Date(customer.createdAt).toLocaleDateString() %>
+                    </div>
+                    <div>
+                        <strong>Last login:</strong> 
+                        <%= customer.lastLogin ? new Date(customer.lastLogin).toLocaleDateString() : 'Never' %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

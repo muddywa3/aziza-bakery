@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Aziza Bakery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#d35400',
+              secondary: '#e67e22',
+            },
+            fontFamily: {
+              'display': ['Playfair Display', 'serif'],
+              'body': ['Poppins', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="text-center max-w-md">
+        <div class="text-8xl mb-6">😕</div>
+        <h1 class="font-display text-6xl font-bold text-gray-900 mb-4"><%= error.status || 500 %></h1>
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4"><%= message %></h2>
+        <p class="text-gray-500 mb-8">Oops! Something went wrong.</p>
+        
+        <div class="flex gap-4 justify-center">
+            <a href="/" class="px-6 py-3 bg-primary hover:bg-secondary text-white rounded-lg transition font-medium">
+                Go Home
+            </a>
+            <button onclick="history.back()" class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition font-medium">
+                Go Back
+            </button>
+        </div>
+        
+        <% if (error.stack && process.env.NODE_ENV === 'development') { %>
+            <div class="mt-8 p-4 bg-red-50 rounded-lg text-left">
+                <p class="text-xs text-red-800 font-mono whitespace-pre-wrap"><%= error.stack %></p>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

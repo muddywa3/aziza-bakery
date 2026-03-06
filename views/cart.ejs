@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Aziza Bakery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#d35400',
+              secondary: '#e67e22',
+              cream: '#faf8f5',
+              gold: '#d4af37'
+            },
+            fontFamily: {
+              'display': ['Playfair Display', 'serif'],
+              'body': ['Poppins', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-cream">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="/" class="font-display text-2xl font-bold text-primary">🍰 Aziza Bakery</a>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-primary transition">Home</a>
+                    <a href="/menu" class="text-gray-700 hover:text-primary transition">Menu</a>
+                    <a href="/gallery" class="text-gray-700 hover:text-primary transition">Gallery</a>
+                    <a href="/contact" class="text-gray-700 hover:text-primary transition">Contact</a>
+                    <a href="/cart" class="text-primary font-semibold flex items-center">
+                        🛒 Cart (<span id="cart-count"><%= cart.items.length %></span>)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-primary to-secondary text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-4"><%= title %></h1>
+            <p class="text-xl">Review your items and proceed to checkout</p>
+        </div>
+    </div>
+
+    <!-- Cart Content -->
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <% if (isEmpty) { %>
+            <!-- Empty Cart -->
+            <div class="text-center py-16">
+                <div class="text-8xl mb-8">🛒</div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Your cart is empty</h2>
+                <p class="text-gray-600 text-lg mb-8">Add some delicious items from our menu!</p>
+                <a href="/menu" class="inline-flex items-center justify-center px-8 py-4 bg-primary hover:bg-secondary text-white font-bold rounded-full transition-all duration-300">
+                    Browse Menu
+                </a>
+            </div>
+        <% } else { %>
+            <!-- Cart Items -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Items List -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold">Cart Items</h2>
+                            <button onclick="clearCart()" class="text-red-600 hover:text-red-800 font-medium">
+                                Clear Cart
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4" id="cart-items">
+                            <% cart.items.forEach(function(item) { %>
+                                <div class="cart-item flex items-center space-x-4 p-4 border border-gray-200 rounded-lg" data-product-id="<%= item.productId %>">
+                                    <!-- Product Image -->
+                                    <% if (item.image) { %>
+                                        <img src="/images/<%= item.image %>" alt="<%= item.name %>" class="w-20 h-20 object-cover rounded-lg">
+                                    <% } else { %>
+                                        <div class="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
+                                            <span class="text-gray-500">🍰</span>
+                                        </div>
+                                    <% } %>
+                                    
+                                    <!-- Product Details -->
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-lg"><%= item.name %></h3>
+                                        <p class="text-gray-600">$<%= item.price.toFixed(2) %> each</p>
+                                    </div>
+                                    
+                                    <!-- Quantity Controls -->
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="updateQuantity('<%= item.productId %>', <%= item.quantity - 1 %>)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center transition">
+                                            -
+                                        </button>
+                                        <span class="w-8 text-center font-semibold" id="qty-<%= item.productId %>"><%= item.quantity %></span>
+                                        <button onclick="updateQuantity('<%= item.productId %>', <%= item.quantity + 1 %>)" class="bg-gray-200 hover:bg-gray-300 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center transition">
+                                            +
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Subtotal -->
+                                    <div class="text-right">
+                                        <p class="font-bold text-lg text-primary" id="subtotal-<%= item.productId %>">
+                                            $<%= (item.price * item.quantity).toFixed(2) %>
+                                        </p>
+                                    </div>
+                                    
+                                    <!-- Remove Button -->
+                                    <button onclick="removeFromCart('<%= item.productId %>')" class="text-red-600 hover:text-red-800 p-2">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Order Summary -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+                        <h3 class="text-xl font-bold mb-4">Order Summary</h3>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex justify-between">
+                                <span>Subtotal:</span>
+                                <span id="cart-subtotal">$<%= cart.totalPrice.toFixed(2) %></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Tax (8.5%):</span>
+                                <span id="cart-tax">$<%= (cart.totalPrice * 0.085).toFixed(2) %></span>
+                            </div>
+                            <div class="border-t pt-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-lg">Total:</span>
+                                    <span class="font-bold text-xl text-primary" id="cart-total">
+                                        $<%= (cart.totalPrice * 1.085).toFixed(2) %>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <a href="/checkout" class="w-full bg-primary hover:bg-secondary text-white py-3 rounded font-semibold transition text-center block">
+                                Proceed to Checkout
+                            </a>
+                            <a href="/menu" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 rounded font-semibold transition text-center block">
+                                Continue Shopping
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>&copy; 2026 Aziza Bakery. All rights reserved.</p>
+            <div class="mt-4 space-x-4">
+                <a href="/" class="text-gray-400 hover:text-white transition">Home</a>
+                <a href="/menu" class="text-gray-400 hover:text-white transition">Menu</a>
+                <a href="/gallery" class="text-gray-400 hover:text-white transition">Gallery</a>
+                <a href="/contact" class="text-gray-400 hover:text-white transition">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        async function updateQuantity(productId, newQuantity) {
+            if (newQuantity < 1) {
+                removeFromCart(productId);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/cart/update/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ quantity: newQuantity })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    location.reload(); // Refresh to show updated cart
+                } else {
+                    Swal.fire('Error', result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Update quantity error:', error);
+                Swal.fire('Error', 'Failed to update quantity', 'error');
+            }
+        }
+        
+        async function removeFromCart(productId) {
+            try {
+                const result = await Swal.fire({
+                    title: 'Remove Item?',
+                    text: 'Are you sure you want to remove this item from your cart?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d35400',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Yes, remove it!'
+                });
+                
+                if (result.isConfirmed) {
+                    const response = await fetch(`/cart/remove/${productId}`, {
+                        method: 'POST'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        location.reload(); // Refresh to show updated cart
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Remove from cart error:', error);
+                Swal.fire('Error', 'Failed to remove item', 'error');
+            }
+        }
+        
+        async function clearCart() {
+            try {
+                const result = await Swal.fire({
+                    title: 'Clear Cart?',
+                    text: 'Are you sure you want to remove all items from your cart?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d35400',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Yes, clear cart!'
+                });
+                
+                if (result.isConfirmed) {
+                    const response = await fetch('/cart/clear', {
+                        method: 'POST'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        location.reload(); // Refresh to show empty cart
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Clear cart error:', error);
+                Swal.fire('Error', 'Failed to clear cart', 'error');
+            }
+        }
+    </script>
+
+</body>
+</html>

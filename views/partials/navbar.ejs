@@ -1,0 +1,173 @@
+<!-- Navigation -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-gray-900 transition-all duration-300">
+  <div class="container mx-auto px-6 lg:px-12">
+    <div class="flex justify-between items-center py-5">
+      <a href="/" class="text-white text-2xl lg:text-3xl font-display font-bold tracking-wide hover:text-gold transition-colors duration-300">
+        Aziza Bakery
+      </a>
+      
+      <div class="hidden md:flex items-center space-x-8 lg:space-x-10">
+        <a href="/" class="nav-link text-white/90 hover:text-white transition-colors duration-300 pb-1 <%= (typeof currentPage !== 'undefined' && currentPage === 'home') ? 'active text-white font-semibold hover:text-gold' : '' %>">Home</a>
+        <a href="/menu" class="nav-link text-white/90 hover:text-white transition-colors duration-300 pb-1 <%= (typeof currentPage !== 'undefined' && currentPage === 'menu') ? 'active text-white font-semibold hover:text-gold' : '' %>">Menu</a>
+        <a href="/gallery" class="nav-link text-white/90 hover:text-white transition-colors duration-300 pb-1 <%= (typeof currentPage !== 'undefined' && currentPage === 'gallery') ? 'active text-white font-semibold hover:text-gold' : '' %>">Gallery</a>
+        <a href="/track" class="nav-link text-white/90 hover:text-white transition-colors duration-300 pb-1 <%= (typeof currentPage !== 'undefined' && currentPage === 'track') ? 'active text-white font-semibold hover:text-gold' : '' %>">Track Order</a>
+        <a href="/contact" class="nav-link text-white/90 hover:text-white transition-colors duration-300 pb-1 <%= (typeof currentPage !== 'undefined' && currentPage === 'contact') ? 'active text-white font-semibold hover:text-gold' : '' %>">Contact</a>
+        <a href="/cart" class="nav-link text-white/90 hover:text-white transition-colors duration-300 pb-1 flex items-center <%= (typeof currentPage !== 'undefined' && currentPage === 'cart') ? 'active text-white font-semibold hover:text-gold' : '' %>">
+          🛒 Cart (<span id="cart-count">0</span>)
+        </a>
+        
+        <!-- Authentication Links -->
+        <% if (typeof customer !== 'undefined' && customer) { %>
+          <!-- Logged in customer -->
+          <div class="flex items-center space-x-4">
+            <a href="/profile" class="text-white/90 hover:text-white transition-colors duration-300">
+              👤 <%= customer.name %>
+            </a>
+            <a href="/my-orders" class="text-white/90 hover:text-white transition-colors duration-300">My Orders</a>
+            <a href="/logout" class="px-4 py-2 bg-red-600/20 hover:bg-red-600/30 text-white rounded-full text-sm font-medium transition-all duration-300 border border-red-600/30">
+              Logout
+            </a>
+          </div>
+        <% } else { %>
+          <!-- Not logged in -->
+          <div class="flex items-center space-x-4">
+            <a href="/login" class="text-white/90 hover:text-white transition-colors duration-300">Login</a>
+            <a href="/register" class="px-4 py-2 bg-primary/20 hover:bg-primary/30 text-white rounded-full text-sm font-medium transition-all duration-300 border border-primary/30">
+              Register
+            </a>
+          </div>
+        <% } %>
+      </div>
+      
+      <button id="mobile-menu-btn" class="md:hidden text-white focus:outline-none">
+        <svg id="menu-icon" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg id="close-icon" class="w-7 h-7 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div id="mobile-menu" class="mobile-menu md:hidden">
+      <div class="py-4 space-y-4 border-t border-white/10">
+        <a href="/" class="block text-white/90 hover:text-white transition-colors duration-300 py-2">Home</a>
+        <a href="/menu" class="block text-white/90 hover:text-white transition-colors duration-300 py-2">Menu</a>
+        <a href="/gallery" class="block text-white/90 hover:text-white transition-colors duration-300 py-2">Gallery</a>
+        <a href="/track" class="block text-white/90 hover:text-white transition-colors duration-300 py-2">Track Order</a>
+        <a href="/cart" class="block text-white/90 hover:text-white transition-colors duration-300 py-2">Cart</a>
+        <a href="/contact" class="block text-white/90 hover:text-white transition-colors duration-300 py-2">Contact</a>
+        
+        <!-- Mobile Authentication Links -->
+        <% if (typeof customer !== 'undefined' && customer) { %>
+          <div class="border-t border-white/10 pt-4">
+            <a href="/profile" class="block text-white/90 hover:text-white transition-colors duration-300 py-2">👤 <%= customer.name %></a>
+            <a href="/my-orders" class="block text-white/90 hover:text-white transition-colors duration-300 py-2">My Orders</a>
+            <a href="/logout" class="block text-white/90 hover:text-white transition-colors duration-300 py-2">Logout</a>
+          </div>
+        <% } else { %>
+          <div class="border-t border-white/10 pt-4">
+            <a href="/login" class="block text-white/90 hover:text-white transition-colors duration-300 py-2">Login</a>
+            <a href="/register" class="block text-white/90 hover:text-white transition-colors duration-300 py-2">Register</a>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  .nav-link {
+    position: relative;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #d4af37;
+    transition: width 0.3s ease;
+  }
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    width: 100%;
+  }
+  
+  .navbar-scrolled {
+    background: rgba(17, 24, 39, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mobile-menu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .mobile-menu.open {
+    max-height: 500px;
+  }
+</style>
+
+<script>
+  // Navbar scroll effect
+  window.addEventListener('scroll', function() {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 50) {
+      navbar.classList.add('navbar-scrolled');
+    } else {
+      navbar.classList.remove('navbar-scrolled');
+    }
+  });
+  
+  // Mobile menu toggle
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIcon = document.getElementById('menu-icon');
+  const closeIcon = document.getElementById('close-icon');
+  
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', function() {
+      mobileMenu.classList.toggle('open');
+      menuIcon.classList.toggle('hidden');
+      closeIcon.classList.toggle('hidden');
+    });
+  }
+  
+  // Load cart count on page load
+  loadCartCount();
+  
+  async function loadCartCount() {
+    try {
+      // Get cart count from server
+      const response = await fetch('/cart/count');
+      const result = await response.json();
+      
+      if (result.success) {
+        const cartCountElement = document.getElementById('cart-count');
+        if (cartCountElement) {
+          cartCountElement.textContent = result.itemCount;
+        }
+      } else {
+        // Fallback to localStorage
+        const cart = JSON.parse(localStorage.getItem('cart') || '{"items": [], "totalPrice": 0}');
+        const itemCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+        const cartCountElement = document.getElementById('cart-count');
+        if (cartCountElement) {
+          cartCountElement.textContent = itemCount;
+        }
+      }
+    } catch (error) {
+      console.error('Error loading cart count:', error);
+      // Fallback to localStorage
+      const cart = JSON.parse(localStorage.getItem('cart') || '{"items": [], "totalPrice": 0}');
+      const itemCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+      const cartCountElement = document.getElementById('cart-count');
+      if (cartCountElement) {
+        cartCountElement.textContent = itemCount;
+      }
+    }
+  }
+</script>

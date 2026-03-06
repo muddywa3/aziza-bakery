@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'Order Online' %> - Aziza Bakery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#d35400',
+              secondary: '#e67e22',
+              cream: '#faf8f5',
+              gold: '#d4af37'
+            },
+            fontFamily: {
+              'display': ['Playfair Display', 'serif'],
+              'body': ['Poppins', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body { font-family: 'Poppins', sans-serif; }
+      .product-card { transition: all 0.3s ease; }
+      .product-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-cream">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="/" class="font-display text-2xl font-bold text-primary">🍰 Aziza Bakery</a>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="/" class="text-gray-700 hover:text-primary transition">Home</a>
+                    <a href="/menu" class="text-gray-700 hover:text-primary transition">Menu</a>
+                    <a href="/gallery" class="text-gray-700 hover:text-primary transition">Gallery</a>
+                    <a href="/contact" class="text-gray-700 hover:text-primary transition">Contact</a>
+                    <a href="/cart" class="text-gray-700 hover:text-primary transition">Cart</a>
+                    <a href="/order" class="text-primary font-semibold">Order Online</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-primary to-secondary text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold mb-4"><%= typeof title !== 'undefined' ? title : 'Order Online' %></h1>
+            <p class="text-xl">Choose your favorite items and place your order</p>
+            <% if (typeof selectedProduct !== 'undefined' && selectedProduct) { %>
+                <div class="mt-6 bg-white/20 backdrop-blur-sm rounded-lg p-4 inline-block">
+                    <p class="text-lg">✨ Featured: <strong><%= selectedProduct.name %></strong></p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Order Form -->
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Products Section -->
+            <div class="lg:col-span-2">
+                <h2 class="text-2xl font-bold mb-6">Our Products</h2>
+                
+                <% if (typeof categories !== 'undefined' && categories && categories.length > 0) { %>
+                    <% categories.forEach(function(category) { %>
+                        <div class="mb-8">
+                            <h3 class="text-xl font-semibold mb-4 capitalize text-primary"><%= category %></h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <% if (typeof productsByCategory !== 'undefined' && productsByCategory[category]) { %>
+                                    <% productsByCategory[category].forEach(function(product) { %>
+                                        <div class="product-card bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition <%= (typeof selectedProduct !== 'undefined' && selectedProduct && selectedProduct._id === product._id) ? 'ring-2 ring-primary' : '' %>">
+                                            <% if (product.image) { %>
+                                                <img src="/images/<%= product.image %>" alt="<%= product.name %>" class="w-full h-32 object-cover rounded mb-3">
+                                            <% } %>
+                                            <h4 class="font-semibold text-lg mb-2"><%= product.name %></h4>
+                                            <p class="text-gray-600 text-sm mb-3"><%= product.description || 'Freshly baked with premium ingredients' %></p>
+                                            <div class="flex justify-between items-center">
+                                                <span class="text-xl font-bold text-primary">$<%= product.price.toFixed(2) %></span>
+                                                <div class="flex items-center space-x-2">
+                                                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center transition" onclick="changeQuantity('<%= product._id %>', -1)">-</button>
+                                                    <span id="qty-<%= product._id %>" class="w-8 text-center font-semibold">0</span>
+                                                    <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center transition" onclick="changeQuantity('<%= product._id %>', 1)">+</button>
+                                                </div>
+                                            </div>
+                                            <% if (typeof selectedProduct !== 'undefined' && selectedProduct && selectedProduct._id === product._id) { %>
+                                                <div class="mt-3 text-center">
+                                                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm">✨ Featured Item</span>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    <% }); %>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="text-center py-12">
+                        <div class="text-8xl mb-8">🍰</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">No Products Available</h3>
+                        <p class="text-gray-500 text-lg mb-8">We're preparing our delicious products for you!</p>
+                        <a href="/menu" class="inline-block bg-primary hover:bg-secondary text-white px-6 py-3 rounded transition">
+                            View Menu
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+                    <h3 class="text-xl font-bold mb-4">Order Summary</h3>
+                    <div id="cart-items" class="mb-4 min-h-[100px]">
+                        <p class="text-gray-500 text-center py-8">Your cart is empty</p>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="font-semibold">Total:</span>
+                            <span class="text-xl font-bold text-primary" id="total">$0.00</span>
+                        </div>
+                        <button id="checkout-btn" class="w-full bg-primary hover:bg-secondary text-white py-3 rounded font-semibold transition disabled:bg-gray-300 disabled:cursor-not-allowed" disabled>
+                            Proceed to Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>&copy; 2026 Aziza Bakery. All rights reserved.</p>
+            <div class="mt-4 space-x-4">
+                <a href="/" class="text-gray-400 hover:text-white transition">Home</a>
+                <a href="/menu" class="text-gray-400 hover:text-white transition">Menu</a>
+                <a href="/gallery" class="text-gray-400 hover:text-white transition">Gallery</a>
+                <a href="/contact" class="text-gray-400 hover:text-white transition">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Pass server data to JavaScript -->
+    <script type="application/json" id="server-data">
+        {
+            "categories": <%- JSON.stringify(typeof categories !== 'undefined' ? categories : []) %>,
+            "productsByCategory": <%- JSON.stringify(typeof productsByCategory !== 'undefined' ? productsByCategory : {}) %>,
+            "selectedProduct": <%- JSON.stringify(typeof selectedProduct !== 'undefined' ? selectedProduct : null) %>
+        }
+    </script>
+
+    <script>
+        let cart = {};
+        let products = {};
+        
+        // Get server data
+        const serverData = JSON.parse(document.getElementById('server-data').textContent);
+        
+        // Initialize products data from server
+        if (serverData.categories && serverData.categories.length > 0) {
+            serverData.categories.forEach(function(category) {
+                const categoryProducts = serverData.productsByCategory[category] || [];
+                categoryProducts.forEach(function(product) {
+                    products[product._id] = {
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        description: product.description || 'Freshly baked with premium ingredients'
+                    };
+                });
+            });
+        }
+        
+        // Auto-add selected product to cart if exists
+        if (serverData.selectedProduct && serverData.selectedProduct._id) {
+            setTimeout(() => changeQuantity(serverData.selectedProduct._id, 1), 100);
+        }
+        
+        function changeQuantity(productId, change) {
+            const qtyElement = document.getElementById(`qty-${productId}`);
+            if (!qtyElement) return;
+            
+            const currentQty = parseInt(qtyElement.textContent);
+            const newQty = Math.max(0, currentQty + change);
+            
+            qtyElement.textContent = newQty;
+            
+            if (newQty > 0) {
+                cart[productId] = newQty;
+            } else {
+                delete cart[productId];
+            }
+            
+            updateCartDisplay();
+        }
+        
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cart-items');
+            const totalElement = document.getElementById('total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            
+            if (Object.keys(cart).length === 0) {
+                cartItems.innerHTML = '<p class="text-gray-500 text-center py-8">Your cart is empty</p>';
+                totalElement.textContent = '$0.00';
+                checkoutBtn.disabled = true;
+                return;
+            }
+            
+            let html = '';
+            let total = 0;
+            
+            for (const [productId, quantity] of Object.entries(cart)) {
+                const product = products[productId];
+                if (!product) continue;
+                
+                const itemTotal = product.price * quantity;
+                total += itemTotal;
+                
+                html += `
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <div class="flex-1">
+                            <p class="font-medium text-sm">${product.name}</p>
+                            <p class="text-gray-500 text-xs">${quantity} × $${product.price.toFixed(2)}</p>
+                        </div>
+                        <span class="font-semibold text-primary">$${itemTotal.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+            
+            cartItems.innerHTML = html;
+            totalElement.textContent = `$${total.toFixed(2)}`;
+            checkoutBtn.disabled = false;
+        }
+        
+        document.getElementById('checkout-btn').addEventListener('click', function() {
+            if (Object.keys(cart).length === 0) return;
+            
+            Swal.fire({
+                title: 'Order Confirmation',
+                text: `Your order total is ${document.getElementById('total').textContent}. Proceed to checkout?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d35400',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, proceed!',
+                cancelButtonText: 'Continue shopping'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Redirect to actual checkout page
+                    window.location.href = '/checkout';
+                }
+            });
+        });
+        
+        // Initialize cart display
+        updateCartDisplay();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Aziza Bakery Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#d35400',
+              secondary: '#e67e22',
+              cream: '#faf8f5',
+              gold: '#d4af37',
+            },
+            fontFamily: {
+              'display': ['Playfair Display', 'serif'],
+              'body': ['Poppins', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body { font-family: 'Poppins', sans-serif; }
+      .sidebar-link.active { background: rgba(211, 84, 0, 0.1); border-left: 4px solid #d35400; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <%- include('../partials/sidebar', { role: role }) %>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation -->
+            <%- include('../partials/topnav', { username: username }) %>
+            
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <%- body %>
+            </main>
+        </div>
+    </div>
+    
+    <script src="/js/admin.js"></script>
+</body>
+</html>
